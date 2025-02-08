@@ -15,10 +15,10 @@ const Banner = () => {
             <div className="slider-container">
                 <Slider {...settings}>
                     <div className="w-full h-[calc(100vh-150px)]">
-                        <img src="/assets/images/banner-1.jpg" className="w-full h-full object-cover" />
+                        <img src="/assets/images/banner-3.jpg" className="w-full h-full object-cover" />
                     </div>
                     <div className="w-full h-[calc(100vh-150px)]">
-                        <img src="/assets/images/banner-2.webp" className="w-full h-full object-contain" />
+                        <img src="/assets/images/banner-4.jpg" className="w-full h-full object-contain" />
                     </div>
                 </Slider>
             </div>

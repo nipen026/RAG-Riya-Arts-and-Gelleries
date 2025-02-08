@@ -1,30 +1,26 @@
 import { useState } from "react";
 import Footer from "../../Common/Footer";
 import Header from "../../Common/Header"
+import CartPage from "../../Components/CartPage"
 import Loader from "../../Common/Loader";
-import AdditionProduct from "../../Components/Addition-product";
-import Banner from "../../Components/Banner";
-import Product from "../../Components/Product";
 
-const Home = () => {
+const Cart = () => {
     const [loader, setloader] = useState(false);
     setTimeout(() => {
         setloader(true)
-    }, 2000);
+    }, 1000);
     return (
         <>
             {!loader ?
                 <Loader /> :
                 <>
                     <Header />
-                    <Banner />
-                    <Product />
-                    <AdditionProduct />
+                    <CartPage />
                     <Footer />
-                </>
+                    </>
             }
         </>
     )
 }
 
-export default Home;
+export default Cart;

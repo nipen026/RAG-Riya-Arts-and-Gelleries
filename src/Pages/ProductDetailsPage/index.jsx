@@ -1,12 +1,10 @@
 import { useState } from "react";
 import Footer from "../../Common/Footer";
 import Header from "../../Common/Header"
+import ProductDetails from "../../Components/ProductDetails"
 import Loader from "../../Common/Loader";
-import AdditionProduct from "../../Components/Addition-product";
-import Banner from "../../Components/Banner";
-import Product from "../../Components/Product";
 
-const Home = () => {
+const ProductDetailsPage = () => {
     const [loader, setloader] = useState(false);
     setTimeout(() => {
         setloader(true)
@@ -17,14 +15,11 @@ const Home = () => {
                 <Loader /> :
                 <>
                     <Header />
-                    <Banner />
-                    <Product />
-                    <AdditionProduct />
+                    <ProductDetails />
                     <Footer />
-                </>
-            }
+                </>}
         </>
     )
 }
 
-export default Home;
+export default ProductDetailsPage;
