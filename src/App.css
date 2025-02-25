@@ -3,3 +3,16 @@
   max-width: 70%;
   margin: 0 auto;
 }
+@media (max-width:768px) {
+    .container{
+      width: 100%;
+  max-width: 90%;
+    }
+}
+.description-text p{
+  margin: 10px 0px;
+  line-height: 28px;
+}
+.description-text li{
+  margin: 10px 0px;
+}
