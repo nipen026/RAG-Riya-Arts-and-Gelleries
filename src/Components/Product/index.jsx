@@ -12,7 +12,6 @@ const Product = () =>{
             console.log(err);
         })
     },[])
-    console.log(productData);
     
     return (
         <>

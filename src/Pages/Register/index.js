@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { REGISTER } from "../../api/api";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { Link, useNavigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
 
 const RegisterPage = () => {
     const [formData, setFormData] = useState({
@@ -11,12 +14,17 @@ const RegisterPage = () => {
         city: "",
         phone_number: "",
         gender: "M",
-        country_code:''
+        country_code: '',
+        pin_code: '',
+        landmark: '',
     });
+    const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate()
     const countryCodes = [
+        { code: "", country: "--Select Country--" },
+        { code: "+91", country: "India" },
         { code: "+1", country: "USA" },
         { code: "+44", country: "UK" },
-        { code: "+91", country: "India" },
         { code: "+61", country: "Australia" },
         { code: "+971", country: "UAE" },
     ];
@@ -54,9 +62,22 @@ const RegisterPage = () => {
     };
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-        console.log(formData);
+        if (e.target.name === 'landmark' || e.target.name === 'address') {
+            const mergeData = {
+                landmark: e.target.name === 'landmark' ? e.target.value : formData.landmark,
+                address: e.target.name === 'address' ? e.target.value : formData.address,
+                pin_code: e.target.name === 'pin_code' ? e.target.value : formData.pin_code,
+            };
         
+            const updatedAddress = `${mergeData.landmark} ${mergeData.address} ${mergeData.pin_code}`.trim(); // Trim to remove extra spaces
+            setFormData({ ...formData, landmark: mergeData.landmark,pin_code:mergeData.pin_code, address: updatedAddress });
+        } else {
+            setFormData({ ...formData, [e.target.name]: e.target.value });
+        }
+        
+
+        
+
         // Clear error when user starts typing
         setErrors({ ...errors, [e.target.name]: "" });
     };
@@ -65,21 +86,23 @@ const RegisterPage = () => {
         e.preventDefault();
 
         if (validate()) {
-            console.log("Form submitted:", formData);
             const data = {
                 ...formData,
-                phone_number:`${formData.country_code}${formData.phone_number}`
+                phone_number: `${formData.country_code}${formData.phone_number}`
             }
             delete data.country_code
+            delete data.landmark
+            delete data.pin_code
             REGISTER(data).then((res) => {
-                console.log(res);
-                localStorage.setItem('access-token-user',res.data.access_token)
-                localStorage.setItem('refresh-token-user',res.data.refresh_token)
+                localStorage.setItem('access-token-user', res.data.access_token)
+                localStorage.setItem('refresh-token-user', res.data.refresh_token)
+                navigate('/')
             }).catch((err) => {
                 console.log(err);
-
+                toast.error('Invalid Credentials');
+                // window.location.reload();
             })
-            alert("Form submitted successfully!");
+            // alert("Form submitted successfully!");
         } else {
             console.log("Validation failed.");
         }
@@ -87,6 +110,7 @@ const RegisterPage = () => {
 
     return (
         <div className="h-screen flex items-center">
+            <Toaster/>
             <div className="shadow-2xl w-[700px] rounded-xl py-6 mx-auto px-6">
                 <form onSubmit={handleSubmit}>
                     <h1 className="text-2xl font-bold mb-6">Register</h1>
@@ -101,14 +125,24 @@ const RegisterPage = () => {
                         />
                         {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
 
-                        <input
-                            type="password"
-                            name="password"
-                            className="p-2 border w-full mt-5 rounded-lg"
-                            placeholder="Password"
-                            onChange={handleChange}
-                        />
-                        {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+                        <div className="relative w-full">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                name="password"
+                                className="p-2 border w-full mt-5 rounded-lg pr-10"
+                                placeholder="Password"
+                                onChange={handleChange}
+                            />
+                            <button
+                                type="button"
+                                className="absolute right-3 top-1/2 transform text-gray-600"
+                                onClick={() => setShowPassword(!showPassword)}
+                            >
+                                {showPassword ? <AiOutlineEye size={20} /> : <AiOutlineEyeInvisible size={20} />}
+                            </button>
+                            {errors?.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+                        </div>
+
                     </div>
 
                     <div className="grid grid-cols-2 gap-4 mb-4">
@@ -137,11 +171,28 @@ const RegisterPage = () => {
                     <input
                         type="text"
                         className="w-full p-2 border rounded-lg mb-4"
-                        placeholder="Address"
+                        placeholder="HOUSE NO. / STREET / LANDMARK / AREA "
+                        name="landmark"
+                        onChange={handleChange}
+                    />
+                    {errors.landmark && <p className="text-red-500 text-sm">{errors.landmark}</p>}
+
+                    <input
+                        type="text"
+                        className="w-full p-2 border rounded-lg mb-4"
+                        placeholder="STATE"
                         name="address"
                         onChange={handleChange}
                     />
                     {errors.address && <p className="text-red-500 text-sm">{errors.address}</p>}
+                    <input
+                        type="text"
+                        className="w-full p-2 border rounded-lg mb-4"
+                        placeholder="PIN CODE"
+                        name="pin_code"
+                        onChange={handleChange}
+                    />
+                    {errors.pin_code && <p className="text-red-500 text-sm">{errors.pin_code}</p>}
 
                     <div className="grid grid-cols-3 gap-4 mb-4">
                         <div>
@@ -179,6 +230,7 @@ const RegisterPage = () => {
                             {errors.phone_number && <p className="text-red-500 text-sm">{errors.phone_number}</p>}
                         </div>
                         <select className="p-2 border rounded-lg w-full" name="gender" onChange={handleChange}>
+                            <option value="">--Select Gender--</option>
                             <option value="M">Male</option>
                             <option value="F">Female</option>
                         </select>
@@ -191,6 +243,9 @@ const RegisterPage = () => {
                         Submit
                     </button>
                 </form>
+                <div className="text-center my-3">
+                    <p>Already Have An Account ! <Link  to={'/login'}><span className="text-[#f0686a] underline cursor-pointer">Log In</span></Link></p>
+                </div>
             </div>
         </div>
     );
