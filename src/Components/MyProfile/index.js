@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { GET_USER_DATA } from "../../api/api";
+import { useNavigate } from "react-router-dom";
 
 export default function MyProfile() {
-    const [userData, setUserData] = useState(JSON.parse(localStorage.getItem('userData')))
-    // useEffect(()=>{
-    //     GET_USER_DATA().then((res)=>{
-    //         console.log(res);
-    //     }).catch((err)=>{
-    //         console.log(err);
-    //     })
-    // },[]);
-    // console.log(userData);
-
+    const [userData, setUserData] = useState(JSON.parse(localStorage.getItem('userData')));
+    const navigate = useNavigate()
+    useEffect(()=>{
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        
+        if (!userData) {
+            navigate('/login')
+        }
+    },[])
     return (
         <div className="max-w-4xl mx-auto p-6">
             <h2 className="text-xl font-semibold mb-4">My Profile</h2>
@@ -24,8 +23,8 @@ export default function MyProfile() {
                         className="w-12 h-12 rounded-full"
                     />
                     <div>
-                        <h3 className="text-lg font-semibold">{userData.first_name} {userData.last_name}</h3>
-                        <p className="text-sm text-gray-400">{userData.city}</p>
+                        <h3 className="text-lg font-semibold">{userData?.first_name} {userData?.last_name}</h3>
+                        <p className="text-sm text-gray-400">{userData?.city}</p>
                     </div>
                 </div>
             </div>
@@ -35,19 +34,19 @@ export default function MyProfile() {
                 <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
                         <p className="text-gray-500">First Name</p>
-                        <p className="font-semibold">{userData.first_name}</p>
+                        <p className="font-semibold">{userData?.first_name}</p>
                     </div>
                     <div>
                         <p className="text-gray-500">Last Name</p>
-                        <p className="font-semibold">{userData.last_name}</p>
+                        <p className="font-semibold">{userData?.last_name}</p>
                     </div>
                     <div>
                         <p className="text-gray-500">Email Address</p>
-                        <p className="font-semibold">{userData.email}</p>
+                        <p className="font-semibold">{userData?.email}</p>
                     </div>
                     <div>
                         <p className="text-gray-500">Phone</p>
-                        <p className="font-semibold">{userData.phone_number}</p>
+                        <p className="font-semibold">{userData?.phone_number}</p>
                     </div>
 
                 </div>
@@ -62,11 +61,11 @@ export default function MyProfile() {
                     </div>
                     <div>
                         <p className="text-gray-500">City / State</p>
-                        <p className="font-semibold">{userData.city}</p>
+                        <p className="font-semibold">{userData?.city}</p>
                     </div>
                     <div>
                         <p className="text-gray-500">Street / Landmark</p>
-                        <p className="font-semibold">{userData.address}</p>
+                        <p className="font-semibold">{userData?.address}</p>
                     </div>
                 </div>
             </div>

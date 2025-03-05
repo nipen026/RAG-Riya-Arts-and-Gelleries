@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { ADD_TO_CART, ADD_TO_WISHLIST, DELETE_WISHLIST, ORDER_PLACED } from "../../api/api";
-import { FaRegHeart } from "react-icons/fa";
+import { FaRegHeart, FaStar } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa";
 import { LuMinus } from "react-icons/lu";
@@ -15,19 +15,20 @@ export default function ProductDetails() {
   const [nav1, setNav1] = useState(null);
   const [nav2, setNav2] = useState(null);
   const [images, setImages] = useState([]);
+  const [error, setError] = useState({ image: '', url: '' })
   let slider1, slider2;
   useEffect(() => {
     setNav1(slider1);
     setNav2(slider2);
   }, []);
   const [productDetails, setProductDetails] = useState();
-  const [selectImage, setSelectImage] = useState(productDetails?.image);
+  const [selectImage, setSelectImage] = useState();
   const [quantity, setQuantity] = useState(1);
   const [isShaking, setIsShaking] = useState(false);
   const [wishlist, setWishlist] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  localStorage.setItem('productId',productDetails?.id)
+  localStorage.setItem('productId', productDetails?.id)
   useEffect(() => {
     if (productDetails) {
       const newImages = [productDetails?.image]; // Start with main image
@@ -38,6 +39,7 @@ export default function ProductDetails() {
     }
   }, [productDetails]);
 
+  console.log(productDetails);
 
 
   const handleIncrement = () => {
@@ -69,19 +71,44 @@ export default function ProductDetails() {
     const getData = localStorage.getItem('access-token-user');
     if (!getData) {
       navigate('/login');
+      return;
     }
+
+    // Validate URL and image if required
+    if (productDetails?.is_url) {
+      if (!customText.trim()) {
+        setError(prev => ({ ...prev, url: "Spotify URL is required." }));
+        return;
+      }
+
+    } else {
+      if (productDetails?.is_image) {
+        if (!selectImage) {
+          setError(prev => ({ ...prev, image: "Image is required." }));
+          return;
+        }
+      }
+    }
+
+    setError({ image: '', url: '' }); // Clear previous errors
+
     const data = {
       product_id: id,
       quantity: quantity,
-      url: ''
+      url: customText || '',
+      image: selectImage?.target?.files[0] || ''
     };
-    ADD_TO_CART(data).then((res) => {
-      console.log(res);
-      navigate('/cart');
-    }).catch((err) => {
-      console.log(err);
-    });
+
+    ADD_TO_CART(data)
+      .then((res) => {
+        console.log(res);
+        navigate('/cart');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
+
 
   const handleDirectBuy = (id) => {
     const getData = localStorage.getItem('access-token-user');
@@ -92,9 +119,10 @@ export default function ProductDetails() {
     items.push({
       product: id,
       quantity: quantity,
-      url: ""
+      url: customText || '',
+      image: selectImage.target.files[0] || ''
     });
-    ORDER_PLACED({ items })
+    ORDER_PLACED(items)
       .then((res) => {
         if (res.status === true) {
           navigate("/checkout");
@@ -161,21 +189,41 @@ export default function ProductDetails() {
         <div>
           <h1 className="text-2xl font-semibold">{productDetails?.name}</h1>
           <p className="text-lg text-gray-600">Rs. {productDetails?.price}.00</p>
+          <div className="flex gap-1   items-center my-2">
+            {[...Array(productDetails?.average_rating)].map((_, i) => (
+              <FaStar key={i} size={20} className="text-[#f0686a]" />
+            ))}
+            {/* <p className="text-lg ml-5">{(productDetails?.average_rating)}</p> */}
+          </div>
           {productDetails?.status == 'OUT_OF_STOCKS' ? <span className="bg-gray-200 text-gray-800 text-sm px-2 py-1 rounded">Sold Out</span> : ''}
           <div className="description-text">
             <div dangerouslySetInnerHTML={{ __html: productDetails?.description }} />
           </div>
+          {productDetails?.is_url && (
+            <div className="my-4">
+              <label className={error.url ? "block text-sm mb-1 font-medium text-red-500" : "block text-sm mb-1 font-medium text-gray-700"}>Spotify URL<sup className="text-md text-red-500">*</sup></label>
+              <input
+                type="text"
+                placeholder="Spotify URL"
+                onChange={(e) => setCustomText(e.target.value)}
+                className={error.url ? "w-full border border-red-500 p-2 rounded-lg" : "w-full border p-2 rounded-lg"}
+              />
+              <p className="text-sm text-gray-400">If the quantity is more than one, multiple URLs can be added using a comma (',').</p>
+            </div>
+          )}
 
-          {/* <div className="mt-4">
-            <label className="block text-sm font-medium text-gray-700">Quantity</label>
-            <input
-              type="number"
-              value={quantity}
-              onChange={(e) => setQuantity(Number(e.target.value))}
-              min="1"
-              className="w-full border p-2 rounded-lg"
-            />
-          </div> */}
+          {productDetails?.is_image && (
+            <div className="my-4">
+              <label className="block text-sm mb-1 font-medium text-gray-700">Upload Image</label>
+              <input
+                type="file"
+                onChange={(e) => setSelectImage(e)}
+                className="w-full border p-2 rounded-lg"
+              />
+              {error.image && <p className="text-red-500 text-sm">{error.image}</p>}
+            </div>
+          )}
+
           <div className="py-2 px-3 bg-white border border-gray-200 rounded-lg dark:bg-neutral-900 dark:border-neutral-700">
             <div className="w-full flex justify-between items-center gap-x-5">
               <div className="grow">
@@ -183,7 +231,7 @@ export default function ProductDetails() {
                   Select quantity
                 </span>
                 <input
-                  className="w-full p-0 bg-transparent border-0 text-gray-800 focus:ring-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none dark:text-white"
+                  className="w-full outline-none p-0 bg-transparent border-0 text-gray-800 focus:ring-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none dark:text-white"
                   type="number"
                   aria-roledescription="Number field"
                   value={quantity}
@@ -230,6 +278,23 @@ export default function ProductDetails() {
 
         </div>
       </div>
+
+      {productDetails?.reviews?.length > 0 && (
+        <div className="mt-6">
+          <h3 className="text-lg font-semibold mb-2">Reviews</h3>
+          {productDetails?.reviews?.map((rev, index) => (
+            <div key={index} className="p-4 border-b">
+              <p className="text-gray-700 mb-2">{rev.review_text}</p>
+              <div className="flex items-center gap-2">
+                {[...Array(rev.rating)].map((_, i) => (
+                  <FaStar key={i} size={20} className="text-[#f0686a]" />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
     </div>
   );
 }

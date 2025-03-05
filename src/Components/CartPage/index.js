@@ -75,11 +75,11 @@ const CartPage = () => {
       {cart.length === 0 ? (
         <div className="flex flex-col items-center justify-center mt-10">
           <img
-            src="/assets/images/empty-cart-removebg-preview.png" // Change this path to your empty cart image
+            src="/assets/images/cart.png" // Change this path to your empty cart image
             alt="Empty Cart"
-            className="w-[600px] h-[400px] object-contain"
+            className="w-[800px] h-[600px] object-contain"
           />
-          <p className="text-gray-500 text-lg mt-4">Your cart is empty!</p>
+          {/* <p className="text-gray-500 text-lg mt-4">Your cart is as empty as my fridge on a Monday morning.</p> */}
         </div>
       ) : (
         <div className="w-full max-w-4xl bg-white shadow-md rounded-lg p-6">
@@ -137,6 +137,7 @@ const CartPage = () => {
               Estimated Total: Rs.{" "}
               {cart.reduce((acc, item) => acc + item.product.price * item.quantity, 0)}
             </p>
+            <p className="text-sm text-gray-500">Delivery charges are not included; they will be added on the checkout page.</p>
             <button
               onClick={handleCheckout}
               className="mt-4 bg-[#f0686a] text-white px-6 py-2 rounded-lg hover:bg-white border-[1px] border-[#f0686a] transition-all ease-in hover:text-[#f0686a]"
@@ -146,7 +147,7 @@ const CartPage = () => {
           </div>
         </div>
       )}
-    </div>
+    </div>  
   );
 };
 

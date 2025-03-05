@@ -4,33 +4,40 @@ import moment from "moment";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function OrderPage() {
-    const [order, setOrder] = useState([])
+    const [order, setOrder] = useState([]);
     const getAllPaidOrders = () => {
-        GET_ALL_PAID().then((res) => {
-            setOrder(res.data)
-        }).catch((err) => {
-            console.log(err);
-        })
+        const access_token = localStorage.getItem('access-token-user');
+        
+        if (access_token !== null) {
+            GET_ALL_PAID().then((res) => {
+                setOrder(res.data)
+            }).catch((err) => {
+                console.log(err);
+            })
+        }
+      
     }
 
     useEffect(() => {
         getAllPaidOrders();
     }, []);
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const filteredOrders = order.filter(f => !f.history.some(l => l.status === "DELIVERED"));
+    
     return (
         <div className="bg-gray-100">
             <div className="flex justify-center items-center py-5 bg-gray-100">
-                {order.length == 0 ?
+                {filteredOrders.length == 0 ?
 
                     <div className="flex flex-col items-center">
                         <img
-                            src="/assets/images/empty-order.png"
+                            src="/assets/images/shopping-cart.png"
                             alt="Empty Cart"
-                            className="w-[400px] h-[400px] object-contain"
+                            className="w-[700px] h-[400px] object-contain"
                         />
-                        <p className="text-gray-500 mt-4">You have not any order in your cart.</p>
+                        <p className="text-gray-500 mt-4">Great things start with a single step… and maybe an order!</p>
                     </div> :
-                    order.map((f, i) => {
+                    filteredOrders.map((f, i) => {
                         localStorage.setItem('orderID', f.id)
                         return (
                             <div className="bg-white shadow-lg rounded-lg p-6 w-[600px]">
@@ -38,7 +45,7 @@ export default function OrderPage() {
                                     <div className="flex items-center gap-4">
                                         <img
                                             src={f.items[0].product.image}
-                                            alt="Apple Watch"
+                                            alt={f.items[0].product.name}
                                             className="w-16 h-16 object-cover"
                                         />
                                         <div>
@@ -65,9 +72,19 @@ export default function OrderPage() {
                                     <div className="mt-4">
                                         <div className="relative border-l-4 border-[#f0686a] pl-6 space-y-6">
                                             {f.history.map((l, i) => {
-                                                // if (l.status === 'DELIVERED') {
-                                                //     navigate('/review-rating')
-                                                // }
+                                                if (l.status === "DELIVERED") {
+                                                    const reviewedOrders = JSON.parse(localStorage.getItem("reviewedOrders")) || [];
+                                                
+                                                    if (!reviewedOrders.includes(f.id)) {
+                                                        setTimeout(() => {
+                                                            navigate("/review-rating");
+                                                
+                                                            // Save the order ID to localStorage to prevent repeated navigation
+                                                            reviewedOrders.push(f.id);
+                                                            localStorage.setItem("reviewedOrders", JSON.stringify(reviewedOrders));
+                                                        }, 10 * 60 * 1000); // 10 minutes in milliseconds
+                                                    }
+                                                }
                                                 const deliveryDate = moment(l.timestamp).add(7, "days").format("MMMM Do YYYY");
 
                                                 return (

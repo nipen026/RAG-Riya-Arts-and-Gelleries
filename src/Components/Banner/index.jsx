@@ -56,10 +56,14 @@ const Banner = () => {
     return (
         <div className="slider-container">
             {banner.length == 1 ? banner.map((f, i) => (
-                <div key={i} className="w-full h-[80vh] max-lg:h-[60vh] max-md:h-[50vh] max-sm:h-[40vh]">
+                <div
+                    key={i}
+                    className="w-full h-[80vh] max-lg:h-[60vh] max-md:h-[50vh] max-sm:h-[40vh]"
+                >
                     <img
                         src={f.image}
-                        className="w-full h-full object-contain bg-no-repeat"
+                        className="w-full h-full object-center
+                     object-cover  bg-no-repeat"
                         alt={f.name}
                     />
                 </div>

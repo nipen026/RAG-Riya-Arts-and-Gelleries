@@ -49,6 +49,8 @@ const RegisterPage = () => {
         if (!formData.last_name) tempErrors.last_name = "Last name is required.";
         if (!formData.address) tempErrors.address = "Address is required.";
         if (!formData.city) tempErrors.city = "City is required.";
+        if (!formData.landmark) tempErrors.landmark = "Landmark is required.";
+        if (!formData.pin_code) tempErrors.pin_code = "Pin Code is required.";
 
         if (!formData.phone_number) {
             tempErrors.phone_number = "Phone number is required.";
@@ -68,15 +70,15 @@ const RegisterPage = () => {
                 address: e.target.name === 'address' ? e.target.value : formData.address,
                 pin_code: e.target.name === 'pin_code' ? e.target.value : formData.pin_code,
             };
-        
+
             const updatedAddress = `${mergeData.landmark} ${mergeData.address} ${mergeData.pin_code}`.trim(); // Trim to remove extra spaces
-            setFormData({ ...formData, landmark: mergeData.landmark,pin_code:mergeData.pin_code, address: updatedAddress });
+            setFormData({ ...formData, landmark: mergeData.landmark, pin_code: mergeData.pin_code, address: updatedAddress });
         } else {
             setFormData({ ...formData, [e.target.name]: e.target.value });
         }
-        
 
-        
+
+
 
         // Clear error when user starts typing
         setErrors({ ...errors, [e.target.name]: "" });
@@ -93,10 +95,12 @@ const RegisterPage = () => {
             delete data.country_code
             delete data.landmark
             delete data.pin_code
+
+
             REGISTER(data).then((res) => {
                 localStorage.setItem('access-token-user', res.data.access_token)
                 localStorage.setItem('refresh-token-user', res.data.refresh_token)
-                navigate('/')
+                navigate('/login')
             }).catch((err) => {
                 console.log(err);
                 toast.error('Invalid Credentials');
@@ -110,7 +114,7 @@ const RegisterPage = () => {
 
     return (
         <div className="h-screen flex items-center">
-            <Toaster/>
+            <Toaster />
             <div className="shadow-2xl w-[700px] rounded-xl py-6 mx-auto px-6">
                 <form onSubmit={handleSubmit}>
                     <h1 className="text-2xl font-bold mb-6">Register</h1>
@@ -167,32 +171,37 @@ const RegisterPage = () => {
                             {errors.last_name && <p className="text-red-500 text-sm">{errors.last_name}</p>}
                         </div>
                     </div>
+                    <div className="mb-4">
+                        <input
+                            type="text"
+                            className="w-full p-2 border rounded-lg"
+                            placeholder="HOUSE NO. / STREET / LANDMARK / AREA "
+                            name="landmark"
+                            onChange={handleChange}
+                        />
+                        {errors.landmark && <p className="text-red-500 text-sm">{errors.landmark}</p>}
 
+                    </div>
+                    <div className="mb-4">
                     <input
                         type="text"
-                        className="w-full p-2 border rounded-lg mb-4"
-                        placeholder="HOUSE NO. / STREET / LANDMARK / AREA "
-                        name="landmark"
-                        onChange={handleChange}
-                    />
-                    {errors.landmark && <p className="text-red-500 text-sm">{errors.landmark}</p>}
-
-                    <input
-                        type="text"
-                        className="w-full p-2 border rounded-lg mb-4"
+                        className="w-full p-2 border rounded-lg"
                         placeholder="STATE"
                         name="address"
                         onChange={handleChange}
                     />
                     {errors.address && <p className="text-red-500 text-sm">{errors.address}</p>}
-                    <input
+                    </div>
+                   <div className="mb-4">
+                   <input
                         type="text"
-                        className="w-full p-2 border rounded-lg mb-4"
+                        className="w-full p-2 border rounded-lg"
                         placeholder="PIN CODE"
                         name="pin_code"
                         onChange={handleChange}
                     />
                     {errors.pin_code && <p className="text-red-500 text-sm">{errors.pin_code}</p>}
+                   </div>
 
                     <div className="grid grid-cols-3 gap-4 mb-4">
                         <div>
@@ -205,7 +214,7 @@ const RegisterPage = () => {
                             />
                             {errors.city && <p className="text-red-500 text-sm">{errors.city}</p>}
                         </div>
-                        <div className="flex items-center border rounded-lg p-2">
+                        <div className="flex items-center max-md:overflow-hidden border rounded-lg p-2">
                             <select
                                 name="country_code"
                                 className="bg-transparent focus:outline-none"
@@ -244,7 +253,7 @@ const RegisterPage = () => {
                     </button>
                 </form>
                 <div className="text-center my-3">
-                    <p>Already Have An Account ! <Link  to={'/login'}><span className="text-[#f0686a] underline cursor-pointer">Log In</span></Link></p>
+                    <p>Already Have An Account ! <Link to={'/login'}><span className="text-[#f0686a] underline cursor-pointer">Log In</span></Link></p>
                 </div>
             </div>
         </div>

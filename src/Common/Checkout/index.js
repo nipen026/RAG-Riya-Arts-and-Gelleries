@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { GET_ALL_ORDER, ORDER_PAYMENT_TOKEN, VERIFY_PAYMENT_TOKEN } from "../../api/api";
+import { APPLY_COUPON, GET_ALL_ORDER, ORDER_PAYMENT_TOKEN, VERIFY_PAYMENT_TOKEN } from "../../api/api";
 import { useNavigate } from "react-router-dom";
 
 const Checkout = () => {
@@ -17,10 +17,13 @@ const Checkout = () => {
   const [orderId, setOrderId] = useState();
   const [razorpayId, setRazorPayId] = useState();
   const [razorpayResponse, setRazorPayResponse] = useState()
+  const [coupon, setCoupon] = useState();
+  const [cod, setCod] = useState();
+  const [price, setPrice] = useState()
   useEffect(() => {
     getOrderDetails();
   }, []);
-  const navigate =  useNavigate()
+  const navigate = useNavigate()
   const loadRazorpay = () => {
     return new Promise((resolve) => {
       if (window.Razorpay) {
@@ -41,6 +44,7 @@ const Checkout = () => {
       .then((res) => {
         setOrderId(res.data[0].id)
         setProductData(res.data[0].items);
+        setPrice(res.data)
       })
       .catch((err) => {
         console.log(err);
@@ -126,7 +130,7 @@ const Checkout = () => {
       description: "Order Payment",
       order_id: razorpay_order_id,
       handler: async function (response) {
-       
+
         setRazorPayResponse(response)
         const verifyData = {
           razorpay_payment_id: response.razorpay_payment_id,
@@ -146,7 +150,6 @@ const Checkout = () => {
       prefill: {
         name: "RAG Enterprise",
         email: "info.riyaartsandgalleries@gmail.com",
-        contact: "9773075702",
       },
       theme: {
         color: "#3399cc",
@@ -157,7 +160,17 @@ const Checkout = () => {
     rzp.open();
   };
 
+  const handleChangeCoupon = (e) => {
+    const formdataobj = new FormData();
+    formdataobj.append('coupon_code', coupon)
+    APPLY_COUPON(orderId, formdataobj).then((res) => {
+      console.log(res);
+      getOrderDetails()
+    }).catch((err) => {
+      console.log(err);
 
+    });
+  }
   return (
     <>
       {productData.length == 0 ?
@@ -174,6 +187,22 @@ const Checkout = () => {
             {/* Left Section - Form */}
             <div className="w-full md:w-2/3 pr-6">
               <h1 className="text-2xl font-bold mb-6">Checkout</h1>
+              {/* <h2 className="text-xl font-semibold mt-4 mb-2">Coupon Code</h2> */}
+              <div className="mb-4 flex gap-10">
+                <input
+                  type="text"
+                  className="w-full p-2 border rounded-lg"
+                  name="coupon"
+                  placeholder="Enter Coupon Code"
+                  onChange={(e) => setCoupon(e.target.value)}
+                />
+                <button
+                  onClick={() => handleChangeCoupon()}
+                  className="w-[250px] bg-[#f0686a] hover:bg-white hover:border-[#f0686a] transition-all ease-linear hover:text-[#f0686a] border-2 text-white px-6 py-2 rounded-lg "
+                >
+                  Apply Coupon
+                </button>
+              </div>
               <form onSubmit={handleSubmit}>
                 <div className="mb-4">
                   <label className="block text-gray-700">Email</label>
@@ -188,7 +217,7 @@ const Checkout = () => {
                 </div>
 
                 <h2 className="text-xl font-semibold mt-4 mb-2">Delivery</h2>
-                <div className=" gap-4 mb-4">
+                <div className="gap-4 mb-4">
                   <div>
                     <input
                       type="text"
@@ -199,7 +228,6 @@ const Checkout = () => {
                     />
                     {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
                   </div>
-
                 </div>
 
                 <input
@@ -253,6 +281,8 @@ const Checkout = () => {
                 />
                 {errors.phone_number && <p className="text-red-500 text-sm">{errors.phone_number}</p>}
 
+
+
                 <h2 className="text-xl font-semibold mt-4 mb-2">Payment</h2>
                 <div className="p-4 border rounded-lg bg-gray-100 mb-4">
                   <p className="text-gray-700">All transactions are secure and encrypted.</p>
@@ -269,11 +299,13 @@ const Checkout = () => {
                   Pay now
                 </button>
               </form>
+
             </div>
 
             {/* Right Section - Order Summary */}
             <div className="w-full md:w-1/3 border-l pl-6 mt-6 md:mt-0">
               <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
+
               {productData?.map((item) => (
                 <div key={item.id} className="flex items-center justify-between mb-4">
                   <img
@@ -289,13 +321,24 @@ const Checkout = () => {
                 </div>
               ))}
               <div className="border-t pt-4 mt-4">
-                <p className="text-lg font-semibold">
-                  Total: Rs. {productData?.reduce((acc, item) => acc + item.product.price * item.quantity, 0)}
-                </p>
+                <p className="flex justify-between items-center my-4 text-lg font-semibold">Total: <span>Rs. {price?.map((item) => item.final_price ? Math.round(item.final_price + item.discount_amount) : item.total_price)}</span></p>
+                {price?.map((item, index) => {
+                  return (
+                    <>
+                      {item.discount_amount !== 0 ?
+                        <p key={index} className="flex justify-between items-center my-4 text-md text-gray-500 font-semibold">Discount:<span> - Rs.{Math.round(item.discount_amount)}</span></p>
+                        : ''}</>
+                  )
+                })}
+                <p className="flex justify-between items-center my-4 text-lg font-semibold mt-2">Delivery Charges: <span>  Rs. 60</span></p>
+                <hr />
+                <p className="flex justify-between items-center my-4 text-lg font-bold mt-2">Grand Total: Rs. <span>  Rs.  {price?.map((item) => item.final_price == 0 ? Math.round(item.total_price + 60) : Math.round(item.final_price + 60))}</span></p>
               </div>
             </div>
           </div>
-        </div>}
+        </div>
+
+      }
     </>
   );
 };
