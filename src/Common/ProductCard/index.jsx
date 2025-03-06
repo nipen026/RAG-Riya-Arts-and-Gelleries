@@ -41,7 +41,6 @@ const ProductCard = ({ productData }) => {
                 }
             }
         }
-        console.log(product);
         
         const data = {
             product_id: product.id,
@@ -90,7 +89,7 @@ const ProductCard = ({ productData }) => {
 
                         {/* Product Details */}
                         <div className="w-full mt-2 font-semibold text-center">
-                            <Link to={'/product-details'} state={item}>
+                            <Link to={`/product-details/${item.id}`}>
                                 <p className="text-lg">{item.name}</p>
                                 <div className="flex flex-wrap justify-center items-center gap-2">
                                     <p className="text-lg">Rs.:- {item.price}.00</p>

@@ -12,7 +12,8 @@ const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
     const [countData, setCountData] = useState(0);
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -38,10 +39,11 @@ const Header = () => {
     const handleLogout = () => {
         localStorage.removeItem('access-token-user')
         localStorage.removeItem('refresh-token-user');
-        navigate('/')
+        navigate('/');
     }
     return (
         <>
+        
             <div className="bg-white sticky top-0 z-[9999]">
                 <div className="container">
                     <div className=" flex justify-between items-center">
@@ -65,7 +67,7 @@ const Header = () => {
 
                                     {/* Dropdown Menu */}
                                     {isOpen && (
-                                        <div className="absolute right-0 mt-2 w-48 bg-white border shadow-lg rounded-lg z-50">
+                                        <div className="absolute right-0 mt-2 w-48 bg-white border shadow-lg rounded-lg z-50" data-aos="fade-down">
                                             <ul className="py-2">
                                                 {/* My Orders */}
                                                 <Link to={'/myorder'}>

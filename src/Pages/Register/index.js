@@ -133,7 +133,7 @@ const RegisterPage = () => {
                             <input
                                 type={showPassword ? "text" : "password"}
                                 name="password"
-                                className="p-2 border w-full mt-5 rounded-lg pr-10"
+                                className=" p-2 border w-full mt-5 rounded-lg pr-10"
                                 placeholder="Password"
                                 onChange={handleChange}
                             />
@@ -144,8 +144,8 @@ const RegisterPage = () => {
                             >
                                 {showPassword ? <AiOutlineEye size={20} /> : <AiOutlineEyeInvisible size={20} />}
                             </button>
-                            {errors?.password && <p className="text-red-500 text-sm">{errors.password}</p>}
                         </div>
+                            {errors?.password && <p className="text-red-500 text-sm">{errors.password}</p>}
 
                     </div>
 

@@ -256,10 +256,31 @@ export const APPLY_COUPON = async (id,data) => {
         })
     })
 }
+export const GET_SINGLE_PRODUCT_DETAILS = async (id) => {
+    const access_token = localStorage.getItem('access-token-user');
+    if (!access_token) {
+        return await new Promise((resolve, reject) => {
+            axios.get(`${base_url}/product/${id}/`).then((res) => {
+                resolve(res);
+            }).catch((err) => {
+                reject(err);
+            })
+        })
+    } else {
+        return await new Promise((resolve, reject) => {
+            axios.get(`${base_url}/product/${id}/`, {
+                headers: {
+                    Authorization: `Bearer ${access_token}`
+                }
+            }).then((res) => {
+                resolve(res);
+            }).catch((err) => {
+                reject(err);
+            })
+        })
+    }
 
-
-
-
+}
 
 
 

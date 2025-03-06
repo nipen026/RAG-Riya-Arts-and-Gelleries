@@ -7,7 +7,7 @@ export default function OrderPage() {
     const [order, setOrder] = useState([]);
     const getAllPaidOrders = () => {
         const access_token = localStorage.getItem('access-token-user');
-        
+
         if (access_token !== null) {
             GET_ALL_PAID().then((res) => {
                 setOrder(res.data)
@@ -15,7 +15,7 @@ export default function OrderPage() {
                 console.log(err);
             })
         }
-      
+
     }
 
     useEffect(() => {
@@ -23,7 +23,7 @@ export default function OrderPage() {
     }, []);
     const navigate = useNavigate();
     const filteredOrders = order.filter(f => !f.history.some(l => l.status === "DELIVERED"));
-    
+
     return (
         <div className="bg-gray-100">
             <div className="flex justify-center items-center py-5 bg-gray-100">
@@ -74,11 +74,11 @@ export default function OrderPage() {
                                             {f.history.map((l, i) => {
                                                 if (l.status === "DELIVERED") {
                                                     const reviewedOrders = JSON.parse(localStorage.getItem("reviewedOrders")) || [];
-                                                
+
                                                     if (!reviewedOrders.includes(f.id)) {
                                                         setTimeout(() => {
                                                             navigate("/review-rating");
-                                                
+
                                                             // Save the order ID to localStorage to prevent repeated navigation
                                                             reviewedOrders.push(f.id);
                                                             localStorage.setItem("reviewedOrders", JSON.stringify(reviewedOrders));

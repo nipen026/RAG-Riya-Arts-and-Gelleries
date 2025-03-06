@@ -87,7 +87,7 @@ const LoginPage = () => {
                             className="absolute right-3 top-[12px] transform text-gray-600"
                             onClick={() => setShowPassword(!showPassword)}
                         >
-                            {showPassword ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
+                            {showPassword ? <AiOutlineEye size={20} />  :  <AiOutlineEyeInvisible size={20} />}
                         </button>
                         {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
                     </div>

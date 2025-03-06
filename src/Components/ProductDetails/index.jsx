@@ -6,9 +6,10 @@ import { FaHeart } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa";
 import { LuMinus } from "react-icons/lu";
 import Slider from "react-slick";
+import { Helmet } from "react-helmet-async";
 
 
-export default function ProductDetails() {
+export default function ProductDetails({ productDetailsData }) {
   const [mainImage, setMainImage] = useState(null);
   const [extraImages, setExtraImages] = useState([]);
   const [customText, setCustomText] = useState("");
@@ -39,7 +40,9 @@ export default function ProductDetails() {
     }
   }, [productDetails]);
 
-  console.log(productDetails);
+  useEffect(() => {
+    document.title = `${productDetails?.name} | Buy Now - Rag Riya Arts and Gifts`;
+  }, [productDetails?.name]);
 
 
   const handleIncrement = () => {
@@ -50,10 +53,10 @@ export default function ProductDetails() {
     setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
   };
   useEffect(() => {
-    if (location.state) {
-      setProductDetails(location.state);
+    if (productDetailsData) {
+      setProductDetails(productDetailsData);
     }
-  }, [location.state]);
+  }, [productDetailsData]);
 
   const handleMainImageUpload = (event) => {
     const file = event.target.files[0];
@@ -101,7 +104,6 @@ export default function ProductDetails() {
 
     ADD_TO_CART(data)
       .then((res) => {
-        console.log(res);
         navigate('/cart');
       })
       .catch((err) => {
@@ -150,151 +152,177 @@ export default function ProductDetails() {
   }, [productDetails])
 
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-white rounded-lg">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <Slider
-            asNavFor={nav2}
-            ref={(slider) => (slider1 = slider)}
-            arrows={false}
-            autoplay={true}
-            autoplaySpeed={5000}
-            className="mb-4"
-          >
-            {images.map((img, index) => (
-              <div key={index} className="w-full h-[500px]">
-                <img src={img} alt={`Slide ${index}`} className="w-full h-full object-cover rounded-lg" />
-              </div>
-            ))}
-          </Slider>
-          <Slider
-            asNavFor={nav1}
-            ref={(slider) => (slider2 = slider)}
-            slidesToShow={images.length}
-            swipeToSlide={true}
-            focusOnSelect={true}
-            autoplay={true}
-            autoplaySpeed={5000}
-            centerMode={true}
-            className="px-2"
-          >
-            {images.map((img, index) => (
-              <div key={index} className="p-1">
-                <img src={img} alt={`Thumbnail ${index}`} className="h-20 w-20 object-cover rounded-md border border-gray-300" />
-              </div>
-            ))}
-          </Slider>
-        </div>
+    <>
+      <Helmet>
 
-        <div>
-          <h1 className="text-2xl font-semibold">{productDetails?.name}</h1>
-          <p className="text-lg text-gray-600">Rs. {productDetails?.price}.00</p>
-          <div className="flex gap-1   items-center my-2">
-            {[...Array(productDetails?.average_rating)].map((_, i) => (
-              <FaStar key={i} size={20} className="text-[#f0686a]" />
-            ))}
-            {/* <p className="text-lg ml-5">{(productDetails?.average_rating)}</p> */}
-          </div>
-          {productDetails?.status == 'OUT_OF_STOCKS' ? <span className="bg-gray-200 text-gray-800 text-sm px-2 py-1 rounded">Sold Out</span> : ''}
-          <div className="description-text">
-            <div dangerouslySetInnerHTML={{ __html: productDetails?.description }} />
-          </div>
-          {productDetails?.is_url && (
-            <div className="my-4">
-              <label className={error.url ? "block text-sm mb-1 font-medium text-red-500" : "block text-sm mb-1 font-medium text-gray-700"}>Spotify URL<sup className="text-md text-red-500">*</sup></label>
-              <input
-                type="text"
-                placeholder="Spotify URL"
-                onChange={(e) => setCustomText(e.target.value)}
-                className={error.url ? "w-full border border-red-500 p-2 rounded-lg" : "w-full border p-2 rounded-lg"}
-              />
-              <p className="text-sm text-gray-400">If the quantity is more than one, multiple URLs can be added using a comma (',').</p>
-            </div>
-          )}
+        <meta name="description" content={productDetails?.description || "Discover unique handcrafted gifts at Rag Riya Arts and Gifts."} />
+        <meta name="keywords" content={productDetails?.name ? `${productDetails.name}, handmade gifts, personalized gifts` : "unique gifts, handmade gifts"} />
+        <meta name="author" content="Rag Riya Arts and Gifts" />
 
-          {productDetails?.is_image && (
-            <div className="my-4">
-              <label className="block text-sm mb-1 font-medium text-gray-700">Upload Image</label>
-              <input
-                type="file"
-                onChange={(e) => setSelectImage(e)}
-                className="w-full border p-2 rounded-lg"
-              />
-              {error.image && <p className="text-red-500 text-sm">{error.image}</p>}
-            </div>
-          )}
+        {/* Open Graph (for Facebook, LinkedIn) */}
+        <meta property="og:title" content={productDetails?.name ? `${productDetails.name} | Rag Riya Arts and Gifts` : "Rag Riya Arts and Gifts"} />
+        <meta property="og:description" content={productDetails?.description || "Find beautiful handcrafted gifts for every occasion."} />
+        <meta property="og:image" content={productDetails?.image} />
+        <meta property="og:url" content={`https://riyaartsandgifts.in/product-details/${productDetails?.id || ""}`} />
+        <meta property="og:type" content="product" />
 
-          <div className="py-2 px-3 bg-white border border-gray-200 rounded-lg dark:bg-neutral-900 dark:border-neutral-700">
-            <div className="w-full flex justify-between items-center gap-x-5">
-              <div className="grow">
-                <span className="block text-xs text-gray-500 dark:text-neutral-400">
-                  Select quantity
-                </span>
-                <input
-                  className="w-full outline-none p-0 bg-transparent border-0 text-gray-800 focus:ring-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none dark:text-white"
-                  type="number"
-                  aria-roledescription="Number field"
-                  value={quantity}
-                  onChange={(e) => setQuantity(Number(e.target.value))}
-                  min="1"
-                />
-              </div>
-              <div className="flex justify-end items-center gap-x-1.5">
-                <button
-                  type="button"
-                  className="size-6 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-full border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
-                  onClick={handleDecrement}
-                  aria-label="Decrease"
-                >
-                  <LuMinus />
-                </button>
-                <button
-                  type="button"
-                  className="size-6 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-full border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
-                  onClick={handleIncrement}
-                  aria-label="Increase"
-                >
-                  <FaPlus />
-                </button>
-              </div>
-            </div>
-          </div>
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={productDetails?.name ? `${productDetails.name} | Rag Riya Arts and Gifts` : "Rag Riya Arts and Gifts"} />
+        <meta name="twitter:description" content={productDetails?.description || "Discover personalized gifts for every occasion."} />
+        <meta name="twitter:image" content={productDetails?.image || `${productDetails?.image}`} />
 
-          <div className="mt-6 flex gap-3">
-            <button
-              className={`bg-[#f0686a] text-white py-2 rounded-lg w-[100px] text-center flex justify-center items-center text-xl hover:border-[#f0686a] border-[1px] hover:text-[#f0686a] hover:bg-white font-semibold transition-transform ${isShaking ? "animate-wiggle" : ""
-                }`}
-              onClick={() => handleAddToWishlist(productDetails.id)}
+        {/* Canonical URL */}
+        <link rel="canonical" href={`https://riyaartsandgifts.in/product-details/${productDetails?.id || ""}`} />
+      </Helmet>
+
+
+      <div className="max-w-6xl mx-auto p-6 bg-white rounded-lg">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <Slider
+              asNavFor={nav2}
+              ref={(slider) => (slider1 = slider)}
+              arrows={false}
+              autoplay={true}
+              autoplaySpeed={5000}
+              className="mb-4"
             >
-              {wishlist ? <FaHeart /> : <FaRegHeart />}
-            </button>
-            <button onClick={() => handleCart(productDetails.id)} className="w-full border-[1px] border-[#f0686a] text-[#f0686a] hover:bg-[#f0686a] hover:text-white py-2 rounded-lg font-semibold">ADD TO CART</button>
+              {images.map((img, index) => (
+                <div key={index} className="w-full h-[500px]">
+                  <img src={img} alt={`Slide ${index}`} className="w-full h-full object-cover rounded-lg" />
+                </div>
+              ))}
+            </Slider>
+            <Slider
+              asNavFor={nav1}
+              ref={(slider) => (slider2 = slider)}
+              slidesToShow={images.length}
+              swipeToSlide={true}
+              focusOnSelect={true}
+              autoplay={true}
+              autoplaySpeed={5000}
+              centerMode={true}
+              className="px-2"
+            >
+              {images.map((img, index) => (
+                <div key={index} className="p-1">
+                  <img src={img} alt={`Thumbnail ${index}`} className="h-20 w-20 object-cover rounded-md border border-gray-300" />
+                </div>
+              ))}
+            </Slider>
           </div>
 
-          <div className="mt-6">
-            <button onClick={() => handleDirectBuy(productDetails.id)} className="w-full bg-[#f0686a] text-white py-2 rounded-lg hover:border-[#f0686a] border-[1px] hover:text-[#f0686a] hover:bg-white font-semibold">Buy it now</button>
-          </div>
+          <div>
+            <h1 className="text-2xl font-semibold">{productDetails?.name}</h1>
+            <p className="text-lg text-gray-600">Rs. {productDetails?.price}.00</p>
+            <div className="flex gap-1   items-center my-2">
+              {[...Array(productDetails?.average_rating)].map((_, i) => (
+                <FaStar key={i} size={20} className="text-[#f0686a]" />
+              ))}
+              {/* <p className="text-lg ml-5">{(productDetails?.average_rating)}</p> */}
+            </div>
+            {productDetails?.status == 'OUT_OF_STOCKS' ? <span className="bg-gray-200 text-gray-800 text-sm px-2 py-1 rounded">Sold Out</span> : ''}
+            <div className="description-text">
+              <div dangerouslySetInnerHTML={{ __html: productDetails?.description }} />
+            </div>
+            {productDetails?.is_url && (
+              <div className="my-4">
+                <label className={error.url ? "block text-sm mb-1 font-medium text-red-500" : "block text-sm mb-1 font-medium text-gray-700"}>Spotify URL<sup className="text-md text-red-500">*</sup></label>
+                <input
+                  type="text"
+                  placeholder="Spotify URL"
+                  onChange={(e) => setCustomText(e.target.value)}
+                  className={error.url ? "w-full border border-red-500 p-2 rounded-lg" : "w-full border p-2 rounded-lg"}
+                />
+                <p className="text-sm text-gray-400">If the quantity is more than one, multiple URLs can be added using a comma (',').</p>
+              </div>
+            )}
 
+            {productDetails?.is_image && (
+              <div className="my-4">
+                <label className="block text-sm mb-1 font-medium text-gray-700">Upload Image</label>
+                <input
+                  type="file"
+                  onChange={(e) => setSelectImage(e)}
+                  className="w-full border p-2 rounded-lg"
+                />
+                {error.image && <p className="text-red-500 text-sm">{error.image}</p>}
+              </div>
+            )}
 
-        </div>
-      </div>
-
-      {productDetails?.reviews?.length > 0 && (
-        <div className="mt-6">
-          <h3 className="text-lg font-semibold mb-2">Reviews</h3>
-          {productDetails?.reviews?.map((rev, index) => (
-            <div key={index} className="p-4 border-b">
-              <p className="text-gray-700 mb-2">{rev.review_text}</p>
-              <div className="flex items-center gap-2">
-                {[...Array(rev.rating)].map((_, i) => (
-                  <FaStar key={i} size={20} className="text-[#f0686a]" />
-                ))}
+            <div className="py-2 px-3 bg-white border border-gray-200 rounded-lg dark:bg-neutral-900 dark:border-neutral-700">
+              <div className="w-full flex justify-between items-center gap-x-5">
+                <div className="grow">
+                  <span className="block text-xs text-gray-500 dark:text-neutral-400">
+                    Select quantity
+                  </span>
+                  <input
+                    className="w-full outline-none p-0 bg-transparent border-0 text-gray-800 focus:ring-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none dark:text-white"
+                    type="number"
+                    aria-roledescription="Number field"
+                    value={quantity}
+                    onChange={(e) => setQuantity(Number(e.target.value))}
+                    min="1"
+                  />
+                </div>
+                <div className="flex justify-end items-center gap-x-1.5">
+                  <button
+                    type="button"
+                    className="size-6 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-full border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+                    onClick={handleDecrement}
+                    aria-label="Decrease"
+                  >
+                    <LuMinus />
+                  </button>
+                  <button
+                    type="button"
+                    className="size-6 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-full border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+                    onClick={handleIncrement}
+                    aria-label="Increase"
+                  >
+                    <FaPlus />
+                  </button>
+                </div>
               </div>
             </div>
-          ))}
-        </div>
-      )}
 
-    </div>
+            <div className="mt-6 flex gap-3">
+              <button
+                className={`bg-[#f0686a] text-white py-2 rounded-lg w-[100px] text-center flex justify-center items-center text-xl hover:border-[#f0686a] border-[1px] hover:text-[#f0686a] hover:bg-white font-semibold transition-transform ${isShaking ? "animate-wiggle" : ""
+                  }`}
+                onClick={() => handleAddToWishlist(productDetails.id)}
+              >
+                {wishlist ? <FaHeart /> : <FaRegHeart />}
+              </button>
+              <button onClick={() => handleCart(productDetails.id)} className="w-full border-[1px] border-[#f0686a] text-[#f0686a] hover:bg-[#f0686a] hover:text-white py-2 rounded-lg font-semibold">ADD TO CART</button>
+            </div>
+
+            <div className="mt-6">
+              <button onClick={() => handleDirectBuy(productDetails.id)} className="w-full bg-[#f0686a] text-white py-2 rounded-lg hover:border-[#f0686a] border-[1px] hover:text-[#f0686a] hover:bg-white font-semibold">Buy it now</button>
+            </div>
+
+
+          </div>
+        </div>
+
+        {productDetails?.reviews?.length > 0 && (
+          <div className="mt-6">
+            <h3 className="text-lg font-semibold mb-2">Reviews</h3>
+            {productDetails?.reviews?.map((rev, index) => (
+              <div key={index} className="p-4 border-b">
+                <p className="text-gray-700 mb-2">{rev.review_text}</p>
+                <div className="flex items-center gap-2">
+                  {[...Array(rev.rating)].map((_, i) => (
+                    <FaStar key={i} size={20} className="text-[#f0686a]" />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+      </div>
+    </>
   );
 }

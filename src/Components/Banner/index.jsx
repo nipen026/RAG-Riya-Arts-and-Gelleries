@@ -2,8 +2,7 @@ import Slider from "react-slick";
 import { GET_ALL_BANNERS } from "../../api/api";
 import { useEffect, useState } from "react";
 
-const Banner = () => {
-    const [banner, setBanner] = useState([]);
+const Banner = ({banner}) => {
 
     const settings = {
         dots: true,
@@ -39,19 +38,7 @@ const Banner = () => {
     };
 
 
-    useEffect(() => {
-        getAllBanners();
-    }, []);
 
-    const getAllBanners = () => {
-        GET_ALL_BANNERS()
-            .then((res) => {
-                setBanner(res.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    };
 
     return (
         <div className="slider-container">

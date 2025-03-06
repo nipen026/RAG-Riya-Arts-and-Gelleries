@@ -17,15 +17,17 @@ import ReviewRating from './Pages/ReviewRatingPage';
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { useEffect } from 'react';
+import { HelmetProvider } from 'react-helmet-async';
 function App() {
   useEffect(() => {
     AOS.init();
   }, []);
   return (
     <>
+    <HelmetProvider>
       <Routes>
         <Route path='/' element={<Home/>}/>
-        <Route path='/product-details' element={<ProductDetailsPage/>}/>
+        <Route path='/product-details/:id' element={<ProductDetailsPage/>}/>
         <Route path='/cart' element={<Cart/>}/>
         <Route path='/checkout' element={<CheckoutPage/>}/>
         <Route path='/register' element={<RegisterPage/>}/>
@@ -37,7 +39,7 @@ function App() {
         <Route path='/privacy-policy' element={<PrivacyPolicyPage/>}/>
         <Route path='/review-rating' element={<ReviewRating/>}/>
       </Routes>
-      
+      </HelmetProvider>
     </>
   );
 }
