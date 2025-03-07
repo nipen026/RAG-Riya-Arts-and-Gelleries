@@ -12,12 +12,20 @@ const ProductCard = ({ productData }) => {
     const [image, setImage] = useState(null);
     const [error, setError] = useState({ image: '', url: '' });
     const [productDataoptions,setproductDataOptions] = useState()
+    const [base64String, setBase64String] = useState("");
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setImage(file);
-        }
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+              setBase64String(reader.result);
+            };
+            reader.onerror = (error) => {
+              console.error("Error converting file:", error);
+            };
+          }
     };
     const handleCart = (product) => {
         setproductDataOptions(product)
@@ -41,14 +49,14 @@ const ProductCard = ({ productData }) => {
                 }
             }
         }
-        
+      
         const data = {
             product_id: product.id,
             quantity: 1,
             url: text ? text : '',
-            image: image || ''
+            image: base64String || ''
         };
-        console.log(data);
+
         
         ADD_TO_CART(data).then((res) => {
             setIsAddTocartDetails({image: false, url: false})
@@ -80,7 +88,7 @@ const ProductCard = ({ productData }) => {
                 ?.filter((obj) => obj.status === 'IN_STOCK')
                 .map((item, index) => (
                     <div key={index} className="border-2 border-[#f0686a] rounded-xl p-3 w-full 
-                                        max-lg:flex max-lg:flex-col max-lg:items-center" data-aos="flip-left">
+                                        max-lg:flex max-lg:flex-col max-lg:items-center">
 
                         {/* Image Section */}
                         <div className="w-[95%] h-[300px] max-lg:h-[200px]">

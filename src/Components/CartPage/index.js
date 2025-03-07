@@ -88,7 +88,6 @@ const CartPage = () => {
               <tr className="border-b">
                 <th className="text-left p-3">Product</th>
                 <th className="text-left p-3">Quantity</th>
-                <th className="text-left p-3">Total</th>
               </tr>
             </thead>
             <tbody>
@@ -107,14 +106,14 @@ const CartPage = () => {
                   </td>
                   <td className="p-3 flex items-center">
                     <button
-                      className="px-2 py-1 border rounded-lg bg-gray-200 hover:bg-gray-300"
+                      className="px-3 transition-all ease-linear py-1 border rounded-lg text-white hover:text-[#f0686a] bg-[#f0686a] hover:bg-white"
                       onClick={() => handleQuantityChange(item?.id, "decrease")}
                     >
                       -
                     </button>
                     <span className="px-4">{item.quantity}</span>
                     <button
-                      className="px-2 py-1 border rounded-lg bg-gray-200 hover:bg-gray-300"
+                      className="px-3 transition-all ease-linear py-1 border rounded-lg hover:text-white text-[#f0686a] hover:bg-[#f0686a] bg-white"
                       onClick={() => handleQuantityChange(item.id, "increase")}
                     >
                       +

@@ -22,9 +22,9 @@ const ProductDetailsPage = () => {
         })
     }
     useEffect(() => {
-        ProductDetailsApi()
-    }, [])
-    console.log(productDetailsData);
+        setloader(false)
+        ProductDetailsApi();
+    }, [location])
     
     return (
         <>

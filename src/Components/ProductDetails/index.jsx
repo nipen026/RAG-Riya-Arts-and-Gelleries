@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
-import { ADD_TO_CART, ADD_TO_WISHLIST, DELETE_WISHLIST, ORDER_PLACED } from "../../api/api";
+import { ADD_TO_CART, ADD_TO_WISHLIST, DELETE_WISHLIST, GET_PRODUCT_DETAILS, ORDER_PLACED } from "../../api/api";
 import { FaRegHeart, FaStar } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa";
 import { LuMinus } from "react-icons/lu";
 import Slider from "react-slick";
 import { Helmet } from "react-helmet-async";
+import ProductCard from "../../Common/ProductCard";
 
 
 export default function ProductDetails({ productDetailsData }) {
@@ -16,7 +17,8 @@ export default function ProductDetails({ productDetailsData }) {
   const [nav1, setNav1] = useState(null);
   const [nav2, setNav2] = useState(null);
   const [images, setImages] = useState([]);
-  const [error, setError] = useState({ image: '', url: '' })
+  const [error, setError] = useState({ image: '', url: '' });
+  const [allProductData, setAllproductData] = useState([])
   let slider1, slider2;
   useEffect(() => {
     setNav1(slider1);
@@ -29,6 +31,8 @@ export default function ProductDetails({ productDetailsData }) {
   const [wishlist, setWishlist] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const [base64String, setBase64String] = useState("");
+
   localStorage.setItem('productId', productDetails?.id)
   useEffect(() => {
     if (productDetails) {
@@ -59,9 +63,16 @@ export default function ProductDetails({ productDetailsData }) {
   }, [productDetailsData]);
 
   const handleMainImageUpload = (event) => {
-    const file = event.target.files[0];
+    const file = event.target.file[0]
     if (file) {
-      setMainImage(URL.createObjectURL(file));
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        setBase64String(reader.result);
+      };
+      reader.onerror = (error) => {
+        console.error("Error converting file:", error);
+      };
     }
   };
 
@@ -99,7 +110,7 @@ export default function ProductDetails({ productDetailsData }) {
       product_id: id,
       quantity: quantity,
       url: customText || '',
-      image: selectImage?.target?.files[0] || ''
+      image: base64String || ''
     };
 
     ADD_TO_CART(data)
@@ -150,6 +161,24 @@ export default function ProductDetails({ productDetailsData }) {
       setWishlist(true)
     }
   }, [productDetails])
+  useEffect(() => {
+    getAllProducts();
+  }, [])
+
+  const getAllProducts = () => {
+    GET_PRODUCT_DETAILS().then((res) => {
+      console.log(res);
+      const fetchdata = res.data.data;
+      const filterData = fetchdata.filter(
+        (obj) => obj.product_type_detail.id == productDetailsData.product_type_detail.id
+      ).slice(0, 4);
+      console.log(filterData);
+
+      setAllproductData(filterData);
+    }).catch((err) => {
+      console.log(err);
+    })
+  }
 
   return (
     <>
@@ -179,6 +208,10 @@ export default function ProductDetails({ productDetailsData }) {
 
       <div className="max-w-6xl mx-auto p-6 bg-white rounded-lg">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {productDetailsData?.images?.length  == 0 ?
+          <div>
+            <img src={productDetails?.image} alt={productDetails?.name}/>
+          </div> :
           <div>
             <Slider
               asNavFor={nav2}
@@ -212,7 +245,7 @@ export default function ProductDetails({ productDetailsData }) {
               ))}
             </Slider>
           </div>
-
+}
           <div>
             <h1 className="text-2xl font-semibold">{productDetails?.name}</h1>
             <p className="text-lg text-gray-600">Rs. {productDetails?.price}.00</p>
@@ -244,7 +277,7 @@ export default function ProductDetails({ productDetailsData }) {
                 <label className="block text-sm mb-1 font-medium text-gray-700">Upload Image</label>
                 <input
                   type="file"
-                  onChange={(e) => setSelectImage(e)}
+                  onChange={(e) => handleMainImageUpload(e)}
                   className="w-full border p-2 rounded-lg"
                 />
                 {error.image && <p className="text-red-500 text-sm">{error.image}</p>}
@@ -301,9 +334,14 @@ export default function ProductDetails({ productDetailsData }) {
             <div className="mt-6">
               <button onClick={() => handleDirectBuy(productDetails.id)} className="w-full bg-[#f0686a] text-white py-2 rounded-lg hover:border-[#f0686a] border-[1px] hover:text-[#f0686a] hover:bg-white font-semibold">Buy it now</button>
             </div>
-
-
           </div>
+        </div>
+
+        <div className="mt-4">
+          <p className="text-[20px] font-semibold">Related Searches</p>
+        </div>
+        <div className="my-4 mt-[40px]">
+          <ProductCard productData={allProductData} />
         </div>
 
         {productDetails?.reviews?.length > 0 && (
@@ -323,6 +361,7 @@ export default function ProductDetails({ productDetailsData }) {
         )}
 
       </div>
+      
     </>
   );
 }
