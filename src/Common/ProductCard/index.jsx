@@ -100,14 +100,14 @@ const ProductCard = ({ productData }) => {
                             <Link to={`/product-details/${item.id}`}>
                                 <p className="text-lg">{item.name}</p>
                                 <div className="flex flex-wrap justify-center items-center gap-2">
-                                    <p className="text-lg">Rs.:- {item.price}.00</p>
-                                    <div className="flex gap-1">
+                                    <p className="text-lg">Rs :- {item.price}.00</p>
+                                    {/* <div className="flex gap-1">
                                         <p className="text-gray-400 font-semibold text-[14px]">MRP</p>
                                         <del className="text-gray-400 font-semibold text-[14px]">
                                             Rs.:- {Math.round((item.price * 20) / 100 + item.price)}.00
                                         </del>
                                     </div>
-                                    <p className="text-[#f0686a] font-semibold text-[14px]">-20% off</p>
+                                    <p className="text-[#f0686a] font-semibold text-[14px]">-20% off</p> */}
                                 </div>
                             </Link>
                         </div>
