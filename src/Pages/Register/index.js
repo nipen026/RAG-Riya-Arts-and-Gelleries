@@ -19,6 +19,7 @@ const RegisterPage = () => {
         landmark: '',
     });
     const [showPassword, setShowPassword] = useState(false);
+    const [loader,setloader] = useState(false)
     const navigate = useNavigate()
     const countryCodes = [
         { code: "", country: "--Select Country--" },
@@ -96,12 +97,14 @@ const RegisterPage = () => {
             delete data.landmark
             delete data.pin_code
 
-
+            setloader(true)
             REGISTER(data).then((res) => {
+                setloader(false);
                 localStorage.setItem('access-token-user', res.data.access_token)
                 localStorage.setItem('refresh-token-user', res.data.refresh_token)
                 navigate('/login')
             }).catch((err) => {
+                setloader(false);
                 console.log(err);
                 toast.error('Invalid Credentials');
                 // window.location.reload();
@@ -248,8 +251,13 @@ const RegisterPage = () => {
                     <button
                         type="submit"
                         className="mt-4 bg-[#f0686a] text-white px-6 py-2 rounded-lg hover:bg-white border-[1px] border-[#f0686a] transition-all ease-in hover:text-[#f0686a] w-full"
+                        disabled={loader}
                     >
-                        Submit
+                         {loader ? (
+                            <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        ) : (
+                            "Submit"
+                        )}
                     </button>
                 </form>
                 <div className="text-center my-3">

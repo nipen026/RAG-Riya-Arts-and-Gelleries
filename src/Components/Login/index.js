@@ -11,6 +11,7 @@ const LoginPage = () => {
     });
     const [showPassword, setShowPassword] = useState(false);
     const [errors, setErrors] = useState({});
+    const [loader,setloader] = useState(false)
     const navigate = useNavigate();
 
     const validate = () => {
@@ -40,8 +41,10 @@ const LoginPage = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validate()) {
+            setloader(true)
             LOGIN(formData)
                 .then((res) => {
+                    setloader(false)
                     localStorage.setItem("access-token-user", res.data.detail.access_token);
                     localStorage.setItem("refresh-token-user", res.data.detail.refresh_token);
                     localStorage.setItem("userData", JSON.stringify(res.data.user));
@@ -52,6 +55,7 @@ const LoginPage = () => {
                     console.log(err);
                     toast.error('Invalid Credentials');
                     // window.location.reload()
+                    setloader(false)
                 });
         }
     };
@@ -94,9 +98,14 @@ const LoginPage = () => {
 
                     <button
                         type="submit"
-                        className="mt-4 bg-[#f0686a] text-white px-6 py-2 rounded-lg hover:bg-white border-[1px] border-[#f0686a] transition-all ease-in hover:text-[#f0686a] w-full"
+                        className="mt-4 bg-[#f0686a] text-white px-6 py-2 rounded-lg hover:bg-white border-[1px] border-[#f0686a] transition-all ease-in hover:text-[#f0686a] w-full flex justify-center items-center"
+                        disabled={loader}
                     >
-                        Login
+                        {loader ? (
+                            <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        ) : (
+                            "Login"
+                        )}
                     </button>
                 </form>
 

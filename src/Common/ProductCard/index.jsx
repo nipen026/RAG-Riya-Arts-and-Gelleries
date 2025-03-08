@@ -13,7 +13,7 @@ const ProductCard = ({ productData }) => {
     const [error, setError] = useState({ image: '', url: '' });
     const [productDataoptions,setproductDataOptions] = useState()
     const [base64String, setBase64String] = useState("");
-
+    const [wishlistId,setWishlistId] = useState()
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -65,9 +65,15 @@ const ProductCard = ({ productData }) => {
         });
     };
     const handleAddToWishlist = (id) => {
+        setWishlistId(id)
+        const access_token = localStorage.getItem('access-token-user');
+        if (!access_token) {
+            navigate('/login')
+        }
         setWishlist(!wishlist);
         setIsShaking(true);
         setTimeout(() => setIsShaking(false), 500);
+        
         const formDataObject = new FormData();
         formDataObject.append('product_id', id)
 
@@ -117,11 +123,11 @@ const ProductCard = ({ productData }) => {
                             <button
                                 className={`w-[70px] text-xl flex justify-center items-center border-[1px] mt-2 border-[#f0686a] text-white 
                                bg-[#f0686a] hover:text-[#f0686a]  
-                               hover:bg-white py-2 rounded-lg font-semibold transition-transform ${isShaking ? "animate-wiggle" : ""
+                               hover:bg-white py-2 rounded-lg font-semibold transition-transform ${ wishlistId === item.id && isShaking ? "animate-wiggle" : ""
                                     }`}
                                 onClick={() => handleAddToWishlist(item.id)}
                             >
-                                {wishlist || item.is_favorit ? <FaHeart /> : <FaRegHeart />}
+                                {  wishlistId === item.id && wishlist || item.is_favorit ? <FaHeart /> : <FaRegHeart />}
                             </button>
                             <button
                                 onClick={() => handleCart(item)}
