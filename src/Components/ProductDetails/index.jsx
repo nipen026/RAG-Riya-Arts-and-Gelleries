@@ -145,6 +145,10 @@ export default function ProductDetails({ productDetailsData }) {
   };
 
   const handleAddToWishlist = (id) => {
+    const access_token = localStorage.getItem('access-token-user');
+    if (!access_token) {
+        navigate('/login')
+    }
     setWishlist(!wishlist);
     setIsShaking(true);
     setTimeout(() => setIsShaking(false), 500);
