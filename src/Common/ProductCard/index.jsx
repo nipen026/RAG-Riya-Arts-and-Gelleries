@@ -91,7 +91,7 @@ const ProductCard = ({ productData }) => {
                                         max-lg:flex max-lg:flex-col max-lg:items-center">
 
                         {/* Image Section */}
-                        <div className="w-[95%] h-[300px] max-lg:h-[200px]">
+                        <div className="w-[95%] h-[300px]">
                             <img src={item.image} className="rounded-lg h-full w-full object-cover bg-no-repeat" alt={item.name} />
                         </div>
 

@@ -73,8 +73,8 @@ const Home = () => {
                     <Header />
                     <Banner banner={banner}/>
                     <Product />
-                    <div className="w-full h-[300px] max-lg:h-[400px]">
-                        <img src="/assets/images/no-cod-available-prepaid-orders-only.jpg" className="max-xl:object-cover w-full h-full object-cover object-center" />
+                    <div className="w-full h-[300px] max-lg:h-[100px]">
+                        <img src="/assets/images/no-cod-available-prepaid-orders-only.jpg" className="max-lg:object-contain w-full h-full object-cover object-center" />
                     </div>
                     {/* <AdditionProduct /> */}
                     <Footer />
