@@ -130,12 +130,12 @@ export default function ProductDetails({ productDetailsData }) {
     }
     const items = [];
     items.push({
-      product: id,
+      product_id: id,
       quantity: quantity,
       url: customText || '',
-      image: selectImage.target.files[0] || ''
+      image: base64String || null
     });
-    ORDER_PLACED(items)
+    ORDER_PLACED({items})
       .then((res) => {
         if (res.status === true) {
           navigate("/checkout");

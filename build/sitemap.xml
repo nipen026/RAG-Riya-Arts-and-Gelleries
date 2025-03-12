@@ -1,0 +1,8 @@
+const Sitemap = require("react-router-sitemap").default;
+const path = require("path");
+
+const routes = ["/", "/product-details/:id", "/cart", "/login","/wishlist","/profile","/terms-conditons","/privacy-policy","/review-rating"]; // Add your routes here
+
+new Sitemap(routes)
+  .build("https://riyaartsandgifts.in/")
+  .save(path.join(__dirname, "public", "sitemap.xml"));
