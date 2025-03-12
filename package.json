@@ -7,6 +7,7 @@
     "aos": "^2.3.4",
     "axios": "^1.7.9",
     "cra-template": "1.2.0",
+    "fs": "^0.0.1-security",
     "moment": "^2.30.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -20,6 +21,8 @@
     "slick-carousel": "^1.8.1"
   },
   "scripts": {
+    "generate-sitemap": "node generate-sitemap.js",
+    "prebuild": "npm run generate-sitemap",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

@@ -1,47 +1,57 @@
-const Sitemap = require("react-router-sitemap").default;
-const axios = require("axios"); // To fetch product data
-const path = require("path");
-
-const BASE_URL = "https://api.riyaartsandgifts.in"; // Your site URL
-const API_URL = `${BASE_URL}/api/product/`; // Replace with your actual API endpoint
-
-async function generateSitemap() {
-  try {
-    // Fetch product data from API
-    const response = await axios.get(API_URL);
-    const products = response.data; // Adjust based on API response format
-
-    // Extract product IDs
-    const productIds = products.map((product) => ({ id: product.id }));
-
-    // Define static routes
-    const staticRoutes = [
-      "/",
-      "/cart",
-      "/login",
-      "/wishlist",
-      "/profile",
-      "/terms-conditions",
-      "/privacy-policy",
-      "/review-rating",
-    ];
-
-    // Define dynamic routes with actual product IDs
-    const paramsConfig = {
-      "/product-details/:id": productIds,
-    };
-
-    // Generate sitemap
-    new Sitemap(staticRoutes)
-      .applyParams(paramsConfig)
-      .build(BASE_URL)
-      .save(path.join(__dirname, "public", "sitemap.xml"));
-
-    console.log("Sitemap generated successfully!");
-  } catch (error) {
-    console.error("Error fetching product data:", error);
-  }
-}
-
-// Run the sitemap generator
-generateSitemap();
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://api.riyaartsandgifts.in/</loc>
+  </url>
+  <url>
+    <loc>https://api.riyaartsandgifts.in/cart</loc>
+  </url>
+  <url>
+    <loc>https://api.riyaartsandgifts.in/login</loc>
+  </url>
+  <url>
+    <loc>https://api.riyaartsandgifts.in/wishlist</loc>
+  </url>
+  <url>
+    <loc>https://api.riyaartsandgifts.in/profile</loc>
+  </url>
+  <url>
+    <loc>https://api.riyaartsandgifts.in/terms-conditions</loc>
+  </url>
+  <url>
+    <loc>https://api.riyaartsandgifts.in/privacy-policy</loc>
+  </url>
+  <url>
+    <loc>https://api.riyaartsandgifts.in/review-rating</loc>
+  </url>
+  <url>
+    <loc>https://api.riyaartsandgifts.in/product-details/5</loc>
+  </url>
+  <url>
+    <loc>https://api.riyaartsandgifts.in/product-details/8</loc>
+  </url>
+  <url>
+    <loc>https://api.riyaartsandgifts.in/product-details/10</loc>
+  </url>
+  <url>
+    <loc>https://api.riyaartsandgifts.in/product-details/11</loc>
+  </url>
+  <url>
+    <loc>https://api.riyaartsandgifts.in/product-details/12</loc>
+  </url>
+  <url>
+    <loc>https://api.riyaartsandgifts.in/product-details/13</loc>
+  </url>
+  <url>
+    <loc>https://api.riyaartsandgifts.in/product-details/14</loc>
+  </url>
+  <url>
+    <loc>https://api.riyaartsandgifts.in/product-details/15</loc>
+  </url>
+  <url>
+    <loc>https://api.riyaartsandgifts.in/product-details/16</loc>
+  </url>
+  <url>
+    <loc>https://api.riyaartsandgifts.in/product-details/17</loc>
+  </url>
+</urlset>
