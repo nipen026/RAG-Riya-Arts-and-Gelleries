@@ -188,12 +188,12 @@ export default function ProductDetails({ productDetailsData }) {
     <>
       <Helmet>
 
-        <meta name="description" content={productDetails?.description || "Discover unique handcrafted gifts at Rag Riya Arts and Gifts."} />
+        <meta name="description" content={productDetails?.description || "Discover unique handcrafted gifts at Riya Arts and Gifts."} />
         <meta name="keywords" content={productDetails?.name ? `${productDetails.name}, handmade gifts, personalized gifts` : "unique gifts, handmade gifts"} />
-        <meta name="author" content="Rag Riya Arts and Gifts" />
+        <meta name="author" content="Riya Arts and Gifts" />
 
         {/* Open Graph (for Facebook, LinkedIn) */}
-        <meta property="og:title" content={productDetails?.name ? `${productDetails.name} | Rag Riya Arts and Gifts` : "Rag Riya Arts and Gifts"} />
+        <meta property="og:title" content={productDetails?.name ? `${productDetails.name} | Riya Arts and Gifts` : "Riya Arts and Gifts"} />
         <meta property="og:description" content={productDetails?.description || "Find beautiful handcrafted gifts for every occasion."} />
         <meta property="og:image" content={productDetails?.image} />
         <meta property="og:url" content={`https://riyaartsandgifts.in/product-details/${productDetails?.id || ""}`} />
@@ -201,7 +201,7 @@ export default function ProductDetails({ productDetailsData }) {
 
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={productDetails?.name ? `${productDetails.name} | Rag Riya Arts and Gifts` : "Rag Riya Arts and Gifts"} />
+        <meta name="twitter:title" content={productDetails?.name ? `${productDetails.name} | Riya Arts and Gifts` : "Riya Arts and Gifts"} />
         <meta name="twitter:description" content={productDetails?.description || "Discover personalized gifts for every occasion."} />
         <meta name="twitter:image" content={productDetails?.image || `${productDetails?.image}`} />
 

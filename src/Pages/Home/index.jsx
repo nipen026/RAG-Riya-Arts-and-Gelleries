@@ -29,7 +29,7 @@ const Home = () => {
         <>
             <Helmet>
                 {/* Basic SEO */}
-                <title>Rag Riya Arts and Gifts | Unique & Personalized Gifts</title>
+                <title>Riya Arts and Gifts | Unique & Personalized Gifts</title>
                 <meta name="description" content="Discover unique and personalized gifts for every occasion at Rag Riya Arts and Gifts. Perfect for birthdays, anniversaries, and special moments!" />
                 <meta name="keywords" content="Rag Riya Arts and Gifts, unique gifts, personalized gifts, handmade gifts, birthday gifts, anniversary gifts" />
                 <meta name="author" content="Rag Riya Arts and Gifts" />
