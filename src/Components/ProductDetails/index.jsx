@@ -45,7 +45,7 @@ export default function ProductDetails({ productDetailsData }) {
   }, [productDetails]);
 
   useEffect(() => {
-    document.title = `${productDetails?.name} | Buy Now - Rag Riya Arts and Gifts`;
+    document.title = `${productDetails?.name} | Buy Now - Riya Arts and Gifts`;
   }, [productDetails?.name]);
 
 
